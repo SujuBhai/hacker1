@@ -1,0 +1,41 @@
+---practical3---
+
+rainfall.timeseries<-c(799,1172.5,345.7,987.4,2334.4,243.5,877.4,199.2,544.3,388.1,699.1)
+rainfall.timeseries<-ts(rainfall,start = c(2012,1),frequency=12)
+print(rainfall.timeseries)
+png("rainfall.png")
+plot(rainfall.timeseries)
+dev.off()
+plot(rainfall.timeseries)
+
+
+
+---practical7---
+
+import pandas as pd
+file_path = "C:\\Users\\DELL\\Downloads\\customers-100.csv"
+df = pd.read_csv(file_path)
+print("\n First 5 rows of the dataset:")
+print(df.head()) # Show the first 5 rows
+print("\n Dataset Summary:")
+print(df.info())
+print("\n Basic Statistics:")
+print(df.describe())
+print("\n Missing Values in Each Column:")
+print(df.isnull().sum())
+print("\n Column Names:")
+print(df.columns)
+
+
+
+---practical8---
+
+import pandas as pd
+from matplotlib import pyplot as plt
+plt.rcParams["figure.figsize"]=[8.00,4.50]
+plt.rcParams["figure.autolayout"]=True
+columns=["Item_name","Qty_sold"]
+df=pd.read_csv("C:\\Users\\DELL\\OneDrive\\Desktop\\sample.csv",usecols=columns)
+print("Contents in csv file:",df)
+plt.plot(df.Item_name,df.Qty_sold)
+plt.show()
