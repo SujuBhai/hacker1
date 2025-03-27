@@ -1,4 +1,4 @@
----practical3---
+---practical3---perform the data classification algorithm using R/python
 
 rainfall.timeseries<-c(799,1172.5,345.7,987.4,2334.4,243.5,877.4,199.2,544.3,388.1,699.1)
 rainfall.timeseries<-ts(rainfall,start = c(2012,1),frequency=12)
@@ -10,7 +10,7 @@ plot(rainfall.timeseries)
 
 
 
----practical4---
+---practical4---perform the data clustering using clustering algorithm using R/python
 
 newiris<-iris
 newiris$Species<-NULL
@@ -19,7 +19,7 @@ table(iris$Species,kc$cluster)
 plot(newiris[c("Sepal.Length","Sepal.Width")],col=kc$cluster)
 
 
----practical7---
+---practical7---write a python program to read data from a CSV file, perform simple data analysis,& generate basic insights(use pandas is a python library)
 
 import pandas as pd
 file_path = "C:\\Users\\DELL\\Downloads\\customers-100.csv"
@@ -37,7 +37,7 @@ print(df.columns)
 
 
 
----practical8---
+---practical8---A) perform data visualization using python on any sales data B) perform data visualization using powerBI on any sales data
 
 import pandas as pd
 from matplotlib import pyplot as plt
