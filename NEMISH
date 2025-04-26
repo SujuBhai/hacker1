@@ -1,0 +1,191 @@
+```{r}
+Question 1: Perform an event study for the following information.Stocks from either Nifty 500 or S&P 500.Stocks must start with your initials (T/K for Taniya Kalrani).If you pick Nifty for (a), then S&P for (b), or vice versa. Event: Crude oil touched 120 USD/barrel on 8th March 2022. Check for event windows:[-3, +3][-5, +5][-7, +7][-10, +10] Use:60-day estimation window. Market model (regression). t-test for significance
+(a) 3 stocks from Steel sector(b) 3 stocks from Automobile sector
+# Load required libraries
+library(quantmod)
+ 
+# Define Parameters
+steel_stocks <- c("TATASTEEL.NS", "TATAELXSI.NS", "TATAINVEST.NS")
+market_index_nifty <- "^NSEI"
+event_date <- as.Date("2022-03-08")
+event_windows <- list(c(-3,3), c(-5,5), c(-7,7), c(-10,10))
+estimation_window <- 60
+start_date <- event_date - 150
+end_date <- event_date + 15
+ 
+# Fetch Returns Function
+get_returns <- function(ticker, start, end) {
+ data <- getSymbols(ticker, src = "yahoo", from = start, to = end, auto.assign = FALSE)
+ dailyReturn(Cl(data))}
+ 
+# Perform Event Study Function
+event_study <- function(stock, market, event_date, event_windows, estimation_window) {
+ stock_ret <- get_returns(stock, start_date, end_date)
+ market_ret <- get_returns(market, start_date, end_date)
+ 
+data <- na.omit(merge(stock_ret, market_ret))
+colnames(data) <- c("stock", "market")
+event_index <- which(index(data) == event_date)
+ 
+for (win in event_windows) {
+est_data <- data[(event_index - estimation_window- max(win)):(event_index - max(win) - 1), ]
+model <- lm(stock ~ market, data = est_data)
+event_data <- data[(event_index + win[1]):(event_index + win[2]), ]
+predicted <- predict(model, newdata = event_data)
+AR <- event_data$stock - predicted
+CAR <- sum(AR)
+t_val <- CAR / (sd(AR) / sqrt(length(AR)))
+p_val <- 2 * pt(-abs(t_val), df = length(AR) - 1)
+   
+cat("\nStock:", stock,"| Window:", paste0("[", win[1], ",", win[2], "]"), "| CAR:", round(CAR, 4),"| t-value:", round(t_val, 3),"| p-value:", round(p_val, 3))}}
+ 
+# Running for all steel stocks
+for (stock in steel_stocks) {event_study(stock, market_index_nifty, event_date, event_windows, estimation_window)}
+```
+ 
+```{r} Q2a What is hypothesis testing? Explain steps in hypothesis testing with example.
+#EG- Testing if sample mean salary is different from 60000:
+sample_mean <- 62000
+population_mean <- 60000
+sample_sd <- 5000
+n <- 50
+t_value <- (sample_mean - population_mean) / (sample_sd / sqrt(n))
+df <- n - 1
+p_value <- 2 * pt(-abs(t_value), df)
+ 
+cat("t-value:", round(t_value, 3), "\n")
+cat("p-value:", round(p_value, 3), "\n")
+ 
+if (p_value < 0.05) {
+cat("Conclusion: Reject Null Hypothesis.\n")} else {
+cat("Conclusion: Fail to Reject Null Hypothesis.\n")}
+```
+```{r} Q What is regression analysis? Explain with example
+# set.seed(123)
+x <- rnorm(100, mean = 50, sd = 10)
+y <- 5 + 2 * x + rnorm(100, mean = 0, sd = 5)
+# Run Linear Regression
+model <- lm(y ~ x)
+summary(model)
+```
+```{r}
+#What is ANOVA? Why is it used?
+# Example: ANOVA
+group <- factor(rep(c("A", "B", "C"), each=10))
+values <- c(rnorm(10, mean=5), rnorm(10, mean=5), rnorm(10, mean=7))
+data <- data.frame(group, values)
+# Run ANOVA
+anova_result <- aov(values ~ group, data=data)
+summary(anova_result)
+ 
+```
+```{r}
+#Explain classification with example.
+# Simulated classification
+set.seed(123)
+x <- rnorm(100)
+y <- ifelse(x > 0, 1, 0)
+data <- data.frame(x, y = as.factor(y))
+# Logistic Regression
+model <- glm(y ~ x, family = "binomial", data = data)
+summary(model)
+ 
+```
+ 
+```{r}
+#What is PCA? When is it used?
+# PCA Example
+data(iris)
+pca_result <- prcomp(iris[,1:4], scale. = TRUE)
+summary(pca_result)
+ 
+```
+```{r}Q1Create the following matrix in R and perform the following operations: Matrix:
+3 2 1  | 4 3 2  Find the transpose of the matrix.Find the inverse of the matrix (if possible)
+#A- Creating the matrix
+mat <- matrix(c(3,4,2,3,1,2), nrow=2, byrow=TRUE)
+# Transpose
+transpose_mat <- t(mat)
+print(transpose_mat)
+# Inverse (Not possible because matrix is not square)
+cat("Inverse not possible: Matrix is not square.")
+The given matrix is not square (2×3), so inverse calculation is not possible. Only transpose is computed."
+```
+In R, a matrix is a two-dimensional data structure where elements are arranged in rows and columns.\
+Some important operations on matrices include:
+Transpose of a Matrix (`t()` function):**\
+The transpose of a matrix is obtained by flipping it over its diagonal. Rows become columns and columns become rows.
+Inverse of a Matrix (`solve()` function):**\
+The inverse of a square matrix AAA is another matrix A−1A^{-1}A−1 such that A×A−1=IA \times A^{-1} = IA×A−1=I, where III is the identity matrix.\
+Not all matrices are invertible. A matrix must be square and non-singular (i.e., determinant ≠ 0) to have an inverse.
+ 
+In R:
+`t(matrix)` → gives the transpose.
+`solve(matrix)` → gives the inverse.
+ 
+```{r} Q2Create a data frame in R with columns: Name, Age, Salary, Department (at least 5 entries).Display the structure of the data frame. Calculate mean salary.
+# Creating the data frame
+df <- data.frame(Name = c("John", "Jane", "Alice", "Bob", "Eve"),
+ Age = c(28, 34, 24, 45, 30), Salary = c(50000, 60000, 45000, 80000, 52000),Department = c("HR", "Finance", "IT", "Marketing", "Finance"))
+# Structure
+str(df)
+# Mean salary
+mean_salary <- mean(df$Salary)
+print(mean_salary)
+```
+```{r}Q3.Write an R program to create a vector containing the sequence from 20 to 50 by 5.
+# Creating the sequence vector
+vec <- seq(20, 50, by=5)
+print(vec)
+```
+```{r}Q4 Write an R program to get the mode(s) of a given vector.
+# Example vector
+vec <- c(1,2,2,3,4,4,4,5)
+# Finding mode
+get_mode <- function(v) {
+ uniqv <- unique(v)
+ uniqv[which.max(tabulate(match(v, uniqv)))]}
+mode_val <- get_mode(vec)
+print(mode_val)
+```
+```{r}Q5 Using mtcars DATASET, fit a simple linear regression model predicting mpg based on hp.
+model <- lm(mpg ~ hp, data=mtcars)
+summary(model)
+```
+```{r} Q1.Write an R program to create two vectors and perform the following operations:Addition,Subtraction, Multiplication, Division
+# Create two vectors
+v1 <- c(1, 2, 3)
+v2 <- c(4, 5, 6)
+add <- v1 + v2
+print(add)
+sub <- v1 - v2
+print(sub)
+mul <- v1 * v2
+print(mul)
+div <- v1 / v2
+print(div)
+```
+```{r} Q2Create a list in R containing name, age, and marks of a student.Display the structure of the list.
+student <- list(Name = "John", Age = 22, Marks = 85)
+str(student)
+```
+```{r} Q3.Write an R program to calculate the mean, median, and standard deviation of a given numeric vector.
+# Numeric vector
+nums <- c(10, 20, 30, 40, 50)
+mean_val <- mean(nums)
+print(mean_val)
+median_val <- median(nums)
+print(median_val)
+sd_val <- sd(nums)
+print(sd_val)
+```
+```{r} Q4 Using the iris dataset, display the first 10 rows.
+# View first 10 rows of iris
+head(iris, 10)
+```
+```{r} Q5.What is the correlation coefficient?Calculate the correlation between mpg and wt variables in mtcars dataset.
+#Correlation between mpg and wt
+correlation <- cor(mtcars$mpg, mtcars$wt)
+print(correlation)
+Concept:The correlation coefficient measures the strength and direction of a linear relationship between two variables.Range: -1 (perfect negative) to +1 (perfect positive).0 indicates no correlation.
+```
